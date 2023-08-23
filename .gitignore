@@ -1,3 +1,9 @@
+# mine
+/.generated_files
+/build
+/debug
+/dist
+
 # Prerequisites
 *.d
 
