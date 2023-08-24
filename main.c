@@ -44,7 +44,7 @@ int main(void)
     SYSTEM_Initialize();
     reppt:
     RESET_SetLow();
-    
+    goto start;
     //Step 1 sync with PC
     uint8_t x;
     gsmbyte = UART1_Read();
@@ -58,22 +58,33 @@ int main(void)
 interval time of two synchronous word instructions should be less than 50 milliseconds, until the module
 has a synchronous word response (0x5B).
  */
-    
+    start:
     RESET_SetHigh();
-    x = 7;
+    x = 255;
     TMR1_Initialize(); //If this doesn't happen in 100mS then reset.
+    T1CONbits.ON = 1;
+    T1CONbits.ON = 0;
     while(gsmbyte != COMM_430_SYNC_CHAR)
     {
         UART2_Write(COMM_START_SYNC_CHAR);
-        delay_10ms(0);
+        delay_10ms(1);
         if(U2STAbits.URXDA)
         {
+            if ((U1STAbits.OERR == 1))
+            {
+                U2STAbits.URXDA = 0;
+            }
             gsmbyte = U2RXREG;
-            U2STAbits.URXDA = 0;
+        }
+        if(gsmbyte == '\r')
+        {
+            RESET_SetLow();
+            T1CONbits.ON = 0;
         }
         if(--x <= 0)
         {
-            SoftReset();
+            RESET_SetLow();
+            goto start;
         }
     }
  /* 2. The instruction sequence order: synchronization word: (0xB5) -> settings and erase address
@@ -82,6 +93,9 @@ The host computer can only send an upgrade data packet instruction (0x03) after 
 and erase space (0x01/0x81). If the instruction sequence is wrong, the module will respond to the error
 code 'M', and enter an error state, you need to restart the PC module and upgrade again.
  */
+    UART2_Write(CMD_DL_BEGIN);
+    x = Read_U2_timeout(gsmusd);
+    T2CONbits.ON = 0;
     
     
     

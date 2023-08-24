@@ -49,14 +49,14 @@
 #include "pin_manager.h"
 #include <stdint.h>
 #include <stdbool.h>
+#include "tmr5.h"
+#include "uart1.h"
+#include "uart2.h"
+#include "interrupt_manager.h"
 #include "tmr2.h"
 #include "tmr1.h"
-#include "tmr5.h"
-#include "uart2.h"
-#include "uart1.h"
-#include "interrupt_manager.h"
 
-#define _XTAL_FREQ  48000000UL
+#define _XTAL_FREQ  66666660UL
 
 /**
  * @Param

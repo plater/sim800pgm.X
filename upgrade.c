@@ -42,6 +42,69 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   */
 #include "buffers.h"
 
+uint8_t gsmbyte;
+uint8_t gsmmsg[512];
+uint8_t gsmusd[128];
+uint8_t gsmusm[24];
+uint8_t gsmtim[23];
+uint8_t gsdate[10];
+uint8_t gstime[10];
+uint8_t phnumb[11];
+uint8_t noofline;
+uint8_t bufr[2048];
+
+uint8_t * searchbufa;
+uint8_t * searchbufb;
+
+void gsm_setbaud(void)
+{
+    while(U2STAbits.URXDA == 0){}
+    Read_U2_timeout1(gsmusd);
+    "AT+IPR=115200"
+}
+
+uint8_t Read_U2_timeout1(uint8_t messagebuf[])
+{
+    uint8_t x = 0;
+    TMR5_Initialize();
+    T5CONbits.ON = 1;
+    while(~IFS0bits.T5IF)
+    {
+        if(U2STAbits.URXDA == 1)
+        {
+            T5CONbits.ON = 0;
+            TMR2_Initialize();
+            messagebuf[x++] = U2RXREG;
+            T5CONbits.ON = 1;
+        }
+    }
+    T5CONbits.ON = 0;
+    return x;
+}
+
+
+
+
+uint8_t Read_U2_timeout(uint8_t messagebuf[])
+{
+    uint8_t x = 0;
+    TMR2_Initialize();
+    T2CONbits.ON = 1;
+    while(~IFS0bits.T2IF)
+    {
+        if(U2STAbits.URXDA == 1)
+        {
+            T2CONbits.ON = 0;
+            TMR2_Initialize();
+            messagebuf[x++] = U2RXREG;
+            T2CONbits.ON = 1;
+        }
+    }
+    T2CONbits.ON = 0;
+    return x;
+}
+
+
 uint8_t Write_Block_U1(uint8_t messagebuf[])// Write block until NULL
 {
     uint8_t y = 0;

@@ -88,7 +88,7 @@ void PIN_MANAGER_Initialize(void)
     CNPDE = 0x0000;
     CNPDF = 0x0000;
     CNPDG = 0x0000;
-    CNPUB = 0x0000;
+    CNPUB = 0x0200;
     CNPUC = 0x0000;
     CNPUD = 0x0000;
     CNPUE = 0x0000;

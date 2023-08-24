@@ -22,6 +22,7 @@ Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 0211
 
 #include <string.h>
 #include <xc.h>
+//#include <>
 #include "mcc_generated_files/mcc.h"
 #if 0
 #include "include/mbedtls/platform.h"
@@ -37,7 +38,7 @@ Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 0211
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <peripheral/reset.h>
+//#include <peripheral/reset.h>
 
 //Defines for SIM800 firmware update
 #define   COMM_START_SYNC_CHAR      0xB5//  Send within 100mS to initiate upgrade mode
@@ -82,7 +83,6 @@ static char *searchbuf;
 int ret;
 int fd;
 uint8_t entbuf[256];
-#endif
     /** tcp.h imports */
 struct
 {
@@ -95,24 +95,26 @@ struct
 	unsigned msggod : 1;
 	unsigned sigtest : 1;
 } gsmflags;
+#endif
 //Gsm related memory
-uint8_t gsmbyte;
+extern uint8_t gsmbyte;
 //moble network code 01 = Vodacom, 10 or 12 = Mtn
-uint8_t mncbyte;
+extern uint8_t mncbyte;
 //gsm scratch pad
 
-uint8_t gsmusd[128];
-uint8_t gsmusm[24];
-uint8_t gsmtim[23];
-uint8_t gsdate[10];
-uint8_t gstime[10];
-uint8_t phnumb[11];
-uint8_t noofline;
-uint8_t bufr[2048];
-uint16_t tmpincount;
+extern uint8_t gsmmsg[512];
+extern uint8_t gsmusd[128];
+extern uint8_t gsmusm[24];
+extern uint8_t gsmtim[23];
+extern uint8_t gsdate[10];
+extern uint8_t gstime[10];
+extern uint8_t phnumb[11];
+extern uint8_t noofline;
+extern uint8_t bufr[2048];
+extern uint16_t tmpincount;
 
-uint8_t * searchbufa;
-uint8_t * searchbufb;
+extern uint8_t * searchbufa;
+extern uint8_t * searchbufb;
 
 #if 0
 struct
@@ -169,6 +171,10 @@ static const uint8_t clockdate[] = "  Date:";
 static const uint8_t clocktime[] = "  Time:";
 
 static const uint8_t Firstmes[] = "Hello. How are you?\r";
+
+void gsm_setbaud(void);
+
+uint8_t Read_U2_timeout(uint8_t messagebuf[]);
 
 uint8_t Write_Block_U1(uint8_t messagebuf[]);
 

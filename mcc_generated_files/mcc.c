@@ -47,27 +47,27 @@
 
 // DEVCFG3
 #pragma config FSRSSEL = PRIORITY_7    // Shadow Register Set Priority Select->SRS Priority 7
-#pragma config PMDL1WAY = ON    // Peripheral Module Disable Configuration->Allow only one reconfiguration
-#pragma config IOL1WAY = ON    // Peripheral Pin Select Configuration->Allow only one reconfiguration
-#pragma config FUSBIDIO = ON    // USB USID Selection->Controlled by the USB Module
-#pragma config FVBUSONIO = ON    // USB VBUS ON Selection->Controlled by USB Module
+#pragma config PMDL1WAY = OFF    // Peripheral Module Disable Configuration->Allow multiple reconfigurations
+#pragma config IOL1WAY = OFF    // Peripheral Pin Select Configuration->Allow multiple reconfigurations
+#pragma config FUSBIDIO = OFF    // USB USID Selection->Controlled by Port Function
+#pragma config FVBUSONIO = OFF    // USB VBUS ON Selection->Controlled by Port Function
 
 // DEVCFG2
-#pragma config FPLLIDIV = DIV_2    // PLL Input Divider->2x Divider
-#pragma config FPLLMUL = MUL_24    // PLL Multiplier->24x Multiplier
-#pragma config UPLLIDIV = DIV_12    // USB PLL Input Divider->12x Divider
+#pragma config FPLLIDIV = DIV_6    // PLL Input Divider->6x Divider
+#pragma config FPLLMUL = MUL_20    // PLL Multiplier->20x Multiplier
+#pragma config UPLLIDIV = DIV_1    // USB PLL Input Divider->1x Divider
 #pragma config UPLLEN = OFF    // USB PLL Enable->Disabled and Bypassed
-#pragma config FPLLODIV = DIV_2    // System PLL Output Clock Divider->PLL Divide by 2
+#pragma config FPLLODIV = DIV_1    // System PLL Output Clock Divider->PLL Divide by 1
 
 // DEVCFG1
-#pragma config FNOSC = FRCPLL    // Oscillator Selection Bits->Fast RC Osc with PLL
+#pragma config FNOSC = PRIPLL    // Oscillator Selection Bits->Primary Osc w/PLL (XT+,HS+,EC+PLL)
 #pragma config FSOSCEN = ON    // Secondary Oscillator Enable->Enabled
 #pragma config IESO = ON    // Internal/External Switch Over->Enabled
-#pragma config POSCMOD = OFF    // Primary Oscillator Configuration->Primary osc disabled
+#pragma config POSCMOD = HS    // Primary Oscillator Configuration->HS osc mode
 #pragma config OSCIOFNC = OFF    // CLKO Output Signal Active on the OSCO Pin->Disabled
-#pragma config FPBDIV = DIV_8    // Peripheral Clock Divisor->Pb_Clk is Sys_Clk/8
+#pragma config FPBDIV = DIV_2    // Peripheral Clock Divisor->Pb_Clk is Sys_Clk/2
 #pragma config FCKSM = CSDCMD    // Clock Switching and Monitor Selection->Clock Switch Disable, FSCM Disabled
-#pragma config WDTPS = PS1048576    // Watchdog Timer Postscaler->1:1048576
+#pragma config WDTPS = PS512    // Watchdog Timer Postscaler->1:512
 #pragma config WINDIS = OFF    // Watchdog Timer Window Enable->Watchdog Timer is in Non-Window Mode
 #pragma config FWDTEN = OFF    // Watchdog Timer Enable->WDT Disabled (SWDTEN Bit Controls)
 #pragma config FWDTWINSZ = WINSZ_25    // Watchdog Timer Window Size->Window Size is 25%
@@ -106,8 +106,8 @@ void SYSTEM_Initialize(void)
     OSCILLATOR_Initialize();
     UART2_Initialize();
     UART1_Initialize();
-    TMR2_Initialize();
     TMR5_Initialize();
+    TMR2_Initialize();
     TMR1_Initialize();
     INTERRUPT_Initialize();
 
@@ -128,8 +128,8 @@ void SYSTEM_RegLock(void)
 void OSCILLATOR_Initialize(void)
 {
     SYSTEM_RegUnlock(); 
-    // CF no clock failure; COSC FRCPLL; PLLODIV DIV_2; UFRCEN disabled; PBDIVRDY disabled; SLOCK out of lock; FRCDIV FRC/2; SLPEN Idle on WAIT instruction; NOSC FRCPLL; PLLMULT MUL_24; SOSCEN disabled; PBDIV DIV_8; CLKLOCK unlocked; OSWEN Switch is Complete; SOSCRDY disabled; 
-    OSCCON = 0x91F1100;
+    // CF no clock failure; COSC PRIPLL; PLLODIV DIV_1; UFRCEN disabled; PBDIVRDY disabled; SLOCK out of lock; FRCDIV FRC/2; SLPEN Idle on WAIT instruction; NOSC PRIPLL; PLLMULT MUL_20; SOSCEN enabled; PBDIV DIV_2; CLKLOCK unlocked; OSWEN Switch is Complete; SOSCRDY disabled; 
+    OSCCON = 0x10D3302;
     SYSTEM_RegLock();
     // TUN Center Frequency; 
     OSCTUN = 0x0;
