@@ -226,10 +226,13 @@ void delay_10ms(uint8_t mtime)
     while(!IFS0bits.T2IF){}
     if(--mtime > 0)
     {
+        T2CONbits.ON = false;
+        IFS0bits.T2IF = 0;
         TMR2_Initialize();
-        TMR2_Start();
+        T2CONbits.ON = true;
         goto more_micro;
     }
+     IFS0bits.T2IF = 0;
 }
 
 uint8_t Read_timeout1(uint8_t *msgadd)
