@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 uint8_t gsmbyte;
 uint8_t gsmmsg[512];
 uint8_t gsmusd[128];
-uint8_t gsmusm[24];
+uint8_t gsmusm[128];
 uint8_t gsmtim[23];
 uint8_t gsdate[10];
 uint8_t gstime[10];
@@ -56,34 +56,64 @@ uint8_t bufr[2048];
 uint8_t * searchbufa;
 uint8_t * searchbufb;
 
-void gsm_setbaud(void)
+void upg_setbaud(void)
 {
+    UART2_Initialize57();
+    RESET_SetHigh();
+    uint8_t z;
     while(U2STAbits.URXDA == 0){}
-    Read_U2_timeout1(gsmusd);
-    "AT+IPR=115200"
+    z = Read_U2_timeout1(gsmmsg, TMR4_4S);
+    z = 0;
+    gsmbyte = 0xFF;
+    gsm_msg("AT+IPR=115200\r");//115200
+    z = Read_U2_timeout1(gsmusd, TMR4_250mS);
+    gsmbyte = 0xFF;
+    gsm_msg("AT&W0\r");
+    z = Read_U2_timeout1(gsmusm, TMR4_250mS);
+    UART2_Initialize();
+    RESET_SetLow();
 }
 
-uint8_t Read_U2_timeout1(uint8_t messagebuf[])
+uint8_t Read_U2_timeout1(uint8_t messagebuf[], uint32_t timeval)
 {
     uint8_t x = 0;
-    TMR5_Initialize();
-    T5CONbits.ON = 1;
-    while(~IFS0bits.T5IF)
+    TMR4_Initialize();
+    IFS0bits.T5IF = 0;
+    TMR4_Period32BitSet(timeval);
+    T4CONbits.ON = 1;
+    while(!IFS0bits.T5IF)
     {
         if(U2STAbits.URXDA == 1)
         {
-            T5CONbits.ON = 0;
+            T4CONbits.ON = 0;
             TMR2_Initialize();
             messagebuf[x++] = U2RXREG;
-            T5CONbits.ON = 1;
+            T4CONbits.ON = 1;
         }
     }
-    T5CONbits.ON = 0;
+    T4CONbits.ON = 0;
     return x;
 }
 
+void gsm_transmit(uint8_t txbyte)
+{
+    U2STAbits.UTXEN = 1;
+    UART2_Write(txbyte);
+    while(!U2STAbits.TRMT){}
+}
 
 
+void gsm_msg(uint8_t *msgadd)
+{
+    uint32_t msgbkup = msgadd;
+    
+    for(uint8_t gsmstr = 0; msgadd[gsmstr] != 0x00; gsmstr++)
+    {
+        gsmbyte = msgadd[gsmstr];
+        gsm_transmit(gsmbyte);
+    }
+//     __delay_us(500);
+}
 
 uint8_t Read_U2_timeout(uint8_t messagebuf[])
 {
@@ -102,6 +132,24 @@ uint8_t Read_U2_timeout(uint8_t messagebuf[])
     }
     T2CONbits.ON = 0;
     return x;
+}
+
+void UART2_Initialize57(void)
+{
+    // Set the UART2 module to the options selected in the user interface.
+
+    // STSEL 1S; IREN disabled; PDSEL 8N; RTSMD disabled; RXINV disabled; SIDL disabled; WAKE disabled; ABAUD disabled; LPBACK disabled; BRGH enabled; UEN TX_RX; ON enabled; 
+    U2MODE = 0x8008;
+
+    // UTXISEL TX_ONE_CHAR; UTXINV disabled; ADDR 0; URXEN disabled; OERR disabled; ADM_EN disabled; URXISEL RX_ONE_CHAR; UTXBRK disabled; UTXEN disabled; ADDEN disabled; 
+    U2STA = 0x0;
+
+    // BaudRate = 57600; Frequency = 33333330 Hz; BRG 143; 
+    U2BRG = 0x8F;
+
+    U2STAbits.UTXEN = 1;
+    U2STAbits.URXEN = 1;
+
 }
 
 
@@ -188,7 +236,7 @@ uint8_t Read_timeout1(uint8_t *msgadd)
 {
     uint8_t v = 0;
     IEC1bits.U1RXIE = 1;
-    TMR5_Initialize();
+    TMR4_Initialize();
     T5CONbits.ON = 1;
     while(!IFS1bits.U1RXIF)
     {
@@ -197,7 +245,7 @@ uint8_t Read_timeout1(uint8_t *msgadd)
             IFS1bits.U1RXIF = 0;
             msgadd[v] = UART1_Read();
             T5CONbits.ON = 0;
-            TMR5_Initialize();
+            TMR4_Initialize();
             T5CONbits.ON = 1;
             if(v < 128)
             {

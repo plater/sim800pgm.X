@@ -5,8 +5,9 @@
         <group>
             <file>file:/home/davepl/MPLABXProjects/sim800pgm.X/upgrade.c</file>
             <file>file:/home/davepl/MPLABXProjects/sim800pgm.X/main.c</file>
-            <file>file:/home/davepl/MPLABXProjects/sim800pgm.X/mcc_generated_files/uart1.c</file>
+            <file>file:/home/davepl/MPLABXProjects/sim800pgm.X/mcc_generated_files/uart2.c</file>
             <file>file:/home/davepl/MPLABXProjects/sim800pgm.X/buffers.h</file>
+            <file>file:/home/davepl/MPLABXProjects/sim800pgm.X/mcc_generated_files/tmr4.c</file>
         </group>
     </open-files>
 </project-private>

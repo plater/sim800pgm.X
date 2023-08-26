@@ -44,23 +44,41 @@ Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 0211
 #define   COMM_START_SYNC_CHAR      0xB5//  Send within 100mS to initiate upgrade mode
 #define   COMM_430_SYNC_CHAR        0x5B/** SIM800 sends this when it see's the 0xB5 character and enters upgrade mode
                                             If this doesn't happen within 1 second then start again*/
+#define   COMM_ERASING              0x52// ?R? 0x52	Erasing 	MODULE->PC
 #define	  COMM_HEX_ACK_CHAR         0x00
 
 #define CMD_DL_BEGIN                0x01//  Begin with no erase
 #define CMD_DL_BEGIN_FORMAT         0x81//  Begin with erase
 
-#define CMD_DL_BEGIN_RSP            0x02
-#define CMD_DL_DATA                 0x03
-#define CMD_DL_DATA_RSP             0x04
-#define CMD_DL_END                  0x05
-#define CMD_DL_END_RSP              0x06
+#define CMD_DL_BEGIN_RSP            0x02//Head information confirm 	MODULE->PC
+#define CMD_DL_DATA                 0x03//Send Upgrade data 	PC->MODULE
+#define CMD_DL_DATA_RSP             0x04//Upgrade data confirm 	MODULE->PC
+#define CMD_DL_END                  0x05//Upgrade end 	PC->MODULE
+#define CMD_DL_END_RSP              0x06//Upgrade end confirm 	MODULE->PC
 
-#define CMD_RUN_GSMSW               0x07
-#define CMD_RUN_GSMSW_RSP           0x08
+#define CMD_RUN_GSMSW               0x07//reset module 	PC->MODULE
+#define CMD_RUN_GSMSW_RSP           0x08//Reset module confirm 	MODULE ->PC
 
-#define CMD_DL_BEGIN_ERASE          0x09
-#define CMD_DL_BEGIN_ERASE_ST       0x0A
-#define CMD_DL_BEGIN_ERASE_EN       0x0B
+//Error codes:
+#define ERR_WRT_FLASH_FAIL          0x50//?P? 0x50	Write flash fail 	MODULE->PC
+#define ERR_CHKSUM_ERR              0x43//?C? 0x43	Checksum error 	MODULE->PC
+#define ERR_ERASE_ERROR             0x45//?E? 0x45	Erase error 	MODULE->PC
+#define ERR_FILE_SIZE               0x53//?S? 0x53	File size error 	MODULE->PC
+#define ERR_COMMAND                 0x4D//?M? 0x4D	Command error 	MODULE->PC
+#define ERR_TIMEOUT                 0x54//?T? 0x54	Time out 	MODULE->PC
+#define ERR_DATA_PKG_NUM            0x4E//?N? 0x4E	Data package num error 	MODULE->PC
+#define ERR_TIMEOUT_2COMM           0x46//?F? 0x46	Time out between two commands 	MODULE->PC
+
+#define CMD_DL_BEGIN_ERASE          0x09//
+#define CMD_DL_BEGIN_ERASE_ST       0x0A//
+#define CMD_DL_BEGIN_ERASE_EN       0x0B//
+
+//Defines for TIMER
+#define TMR4_4S                     0x47868C0
+#define TMR4_1S                     0x11E1A30
+#define TMR4_100mS                  0x1C9C38
+#define TMR4_20mS                   0x5B8D8
+#define TMR4_250mS                  0x47868C
 
 
 
@@ -104,7 +122,7 @@ extern uint8_t mncbyte;
 
 extern uint8_t gsmmsg[512];
 extern uint8_t gsmusd[128];
-extern uint8_t gsmusm[24];
+extern uint8_t gsmusm[128];
 extern uint8_t gsmtim[23];
 extern uint8_t gsdate[10];
 extern uint8_t gstime[10];
@@ -172,9 +190,17 @@ static const uint8_t clocktime[] = "  Time:";
 
 static const uint8_t Firstmes[] = "Hello. How are you?\r";
 
-void gsm_setbaud(void);
+void    upg_setbaud(void);
+
+uint8_t Read_U2_timeout1(uint8_t messagebuf[], uint32_t timeval);
 
 uint8_t Read_U2_timeout(uint8_t messagebuf[]);
+
+void UART2_Initialize57(void);
+
+void gsm_transmit(uint8_t txbyte);
+
+void gsm_msg(uint8_t *msgadd);
 
 uint8_t Write_Block_U1(uint8_t messagebuf[]);
 

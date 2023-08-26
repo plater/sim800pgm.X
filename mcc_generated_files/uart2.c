@@ -62,8 +62,8 @@ void UART2_Initialize(void)
     // UTXISEL TX_ONE_CHAR; UTXINV disabled; ADDR 0; URXEN disabled; OERR disabled; ADM_EN disabled; URXISEL RX_ONE_CHAR; UTXBRK disabled; UTXEN disabled; ADDEN disabled; 
     U2STA = 0x0;
 
-    // BaudRate = 57600; Frequency = 33333330 Hz; BRG 143; 
-    U2BRG = 0x8F;
+    // BaudRate = 115200; Frequency = 18750000 Hz; BRG 39; 
+    U2BRG = 0x27;
 
     U2STAbits.UTXEN = 1;
     U2STAbits.URXEN = 1;

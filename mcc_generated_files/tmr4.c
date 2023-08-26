@@ -1,18 +1,18 @@
 
 /**
-  TMR5 Generated Driver API Source File 
+  TMR4 Generated Driver API Source File 
 
   @Company
     Microchip Technology Inc.
 
   @File Name
-    tmr5.c
+    tmr4.c
 
   @Summary
-    This is the generated source file for the TMR5 driver using PIC32MX MCUs
+    This is the generated source file for the TMR4 driver using PIC32MX MCUs
 
   @Description
-    This source file provides APIs for driver for TMR5. 
+    This source file provides APIs for driver for TMR4. 
     Generation Information : 
         Product Revision  :  PIC32MX MCUs - pic32mx : v1.35
         Device            :  PIC32MX470F512H
@@ -49,7 +49,7 @@
 */
 
 #include <xc.h>
-#include "tmr5.h"
+#include "tmr4.h"
 
 /**
   Section: Data Type Definitions
@@ -77,103 +77,118 @@ typedef struct _TMR_OBJ_STRUCT
 
 } TMR_OBJ;
 
-static TMR_OBJ tmr5_obj;
+static TMR_OBJ tmr4_obj;
 
 /**
   Section: Driver Interface
 */
 
 
-void TMR5_Initialize (void)
+void TMR4_Initialize (void)
 {
     // TMR5 0; 
     TMR5 = 0x0;
-    // Period = 3.1956114286 s; Frequency = 5250000 Hz; PR5 65535; 
-    PR5 = 0xFFFF;
-    // TCKPS 1:256; TCS PBCLK; SIDL disabled; TGATE disabled; ON enabled; 
-    T5CON = 0x8070;
+    // TMR4 0; 
+    TMR4 = 0x0;
+    // PR5 286; 
+    PR5 = 0x11E;
+    // Period = 1 s; Frequency = 18750000 Hz; PR4 6704; 
+    PR4 = 0x1A30;
+    // TCKPS 1:1; T32 32 Bit; TCS PBCLK; SIDL disabled; TGATE disabled; ON enabled; 
+    T4CON = 0x8008;
 	
-    tmr5_obj.timerElapsed = false;
+    tmr4_obj.timerElapsed = false;
 
 }
 
-
-
-void TMR5_Tasks_16BitOperation( void )
+void TMR4_Tasks_32BitOperation( void )
 {
     if(IFS0bits.T5IF)
     {
-        tmr5_obj.count++;
-        tmr5_obj.timerElapsed = true;
+        tmr4_obj.count++;
+        tmr4_obj.timerElapsed = true;
         IFS0CLR= 1 << _IFS0_T5IF_POSITION;
     }
 }
 
-void TMR5_Period16BitSet( uint16_t value )
+void TMR4_Period32BitSet( uint32_t value )
 {
     /* Update the counter values */
-    PR5 = value;
-    /* Reset the status information */
-    tmr5_obj.timerElapsed = false;
+    PR4 = (value & 0x0000FFFF);
+    PR5 = ((value & 0xFFFF0000)>>16);
 }
 
-uint16_t TMR5_Period16BitGet( void )
+uint32_t TMR4_Period32BitGet( void )
 {
-    return( PR5 );
+    uint32_t periodVal = 0xFFFFFFFF;
+
+    /* get the timer period value and return it */
+    periodVal = (((uint32_t)PR5 <<16) | PR4);
+
+    return( periodVal );
+
 }
 
-void TMR5_Counter16BitSet ( uint16_t value )
+void TMR4_Counter32BitSet( uint32_t value )
 {
     /* Update the counter values */
-    TMR5 = value;
-    /* Reset the status information */
-    tmr5_obj.timerElapsed = false;
+   TMR4 = (value & 0x0000FFFF);
+   TMR5 = ((value & 0xFFFF0000)>>16);
+
 }
 
-uint16_t TMR5_Counter16BitGet( void )
+uint32_t TMR4_Counter32BitGet( void )
 {
-    return( TMR5 );
+    uint32_t countVal = 0xFFFFFFFF;
+
+    /* get the current counter value and return it */
+    countVal = (((uint32_t)TMR5<<16)| TMR4 );
+
+    return( countVal );
+
 }
 
 
-void TMR5_Start( void )
+
+
+void TMR4_Start( void )
 {
     /* Reset the status information */
-    tmr5_obj.timerElapsed = false;
+    tmr4_obj.timerElapsed = false;
 
 
     /* Start the Timer */
-    T5CONbits.ON = 1;
+    T4CONbits.ON = 1;
 }
 
-void TMR5_Stop( void )
+void TMR4_Stop( void )
 {
     /* Stop the Timer */
-    T5CONbits.ON = false;
+    T4CONbits.ON = false;
 
 }
 
-bool TMR5_GetElapsedThenClear(void)
+bool TMR4_GetElapsedThenClear(void)
 {
     bool status;
     
-    status = tmr5_obj.timerElapsed;
+    status = tmr4_obj.timerElapsed;
 
     if(status == true)
     {
-        tmr5_obj.timerElapsed = false;
+        tmr4_obj.timerElapsed = false;
     }
     return status;
 }
 
-int TMR5_SoftwareCounterGet(void)
+int TMR4_SoftwareCounterGet(void)
 {
-    return tmr5_obj.count;
+    return tmr4_obj.count;
 }
 
-void TMR5_SoftwareCounterClear(void)
+void TMR4_SoftwareCounterClear(void)
 {
-    tmr5_obj.count = 0; 
+    tmr4_obj.count = 0; 
 }
 
 /**

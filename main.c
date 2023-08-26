@@ -46,7 +46,7 @@ int main(void)
     RESET_SetLow();
     goto start;
     //Step 1 sync with PC
-    uint8_t x;
+    uint16_t x;
     gsmbyte = UART1_Read();
     while(gsmbyte != 'S')//Character S means Start
     {
@@ -60,14 +60,14 @@ has a synchronous word response (0x5B).
  */
     start:
     RESET_SetHigh();
-    x = 255;
+    x = 65535;
     TMR1_Initialize(); //If this doesn't happen in 100mS then reset.
     T1CONbits.ON = 1;
     T1CONbits.ON = 0;
     while(gsmbyte != COMM_430_SYNC_CHAR)
     {
         UART2_Write(COMM_START_SYNC_CHAR);
-        delay_10ms(1);
+        delay_10ms(5);
         if(U2STAbits.URXDA)
         {
             if ((U1STAbits.OERR == 1))

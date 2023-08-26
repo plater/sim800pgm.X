@@ -53,8 +53,8 @@
 #pragma config FVBUSONIO = OFF    // USB VBUS ON Selection->Controlled by Port Function
 
 // DEVCFG2
-#pragma config FPLLIDIV = DIV_6    // PLL Input Divider->6x Divider
-#pragma config FPLLMUL = MUL_20    // PLL Multiplier->20x Multiplier
+#pragma config FPLLIDIV = DIV_4    // PLL Input Divider->4x Divider
+#pragma config FPLLMUL = MUL_15    // PLL Multiplier->15x Multiplier
 #pragma config UPLLIDIV = DIV_1    // USB PLL Input Divider->1x Divider
 #pragma config UPLLEN = OFF    // USB PLL Enable->Disabled and Bypassed
 #pragma config FPLLODIV = DIV_1    // System PLL Output Clock Divider->PLL Divide by 1
@@ -65,7 +65,7 @@
 #pragma config IESO = ON    // Internal/External Switch Over->Enabled
 #pragma config POSCMOD = HS    // Primary Oscillator Configuration->HS osc mode
 #pragma config OSCIOFNC = OFF    // CLKO Output Signal Active on the OSCO Pin->Disabled
-#pragma config FPBDIV = DIV_2    // Peripheral Clock Divisor->Pb_Clk is Sys_Clk/2
+#pragma config FPBDIV = DIV_4    // Peripheral Clock Divisor->Pb_Clk is Sys_Clk/4
 #pragma config FCKSM = CSDCMD    // Clock Switching and Monitor Selection->Clock Switch Disable, FSCM Disabled
 #pragma config WDTPS = PS512    // Watchdog Timer Postscaler->1:512
 #pragma config WINDIS = OFF    // Watchdog Timer Window Enable->Watchdog Timer is in Non-Window Mode
@@ -106,7 +106,7 @@ void SYSTEM_Initialize(void)
     OSCILLATOR_Initialize();
     UART2_Initialize();
     UART1_Initialize();
-    TMR5_Initialize();
+    TMR4_Initialize();
     TMR2_Initialize();
     TMR1_Initialize();
     INTERRUPT_Initialize();
@@ -128,8 +128,8 @@ void SYSTEM_RegLock(void)
 void OSCILLATOR_Initialize(void)
 {
     SYSTEM_RegUnlock(); 
-    // CF no clock failure; COSC PRIPLL; PLLODIV DIV_1; UFRCEN disabled; PBDIVRDY disabled; SLOCK out of lock; FRCDIV FRC/2; SLPEN Idle on WAIT instruction; NOSC PRIPLL; PLLMULT MUL_20; SOSCEN enabled; PBDIV DIV_2; CLKLOCK unlocked; OSWEN Switch is Complete; SOSCRDY disabled; 
-    OSCCON = 0x10D3302;
+    // CF no clock failure; COSC PRIPLL; PLLODIV DIV_1; UFRCEN disabled; PBDIVRDY disabled; SLOCK out of lock; FRCDIV FRC/2; SLPEN Idle on WAIT instruction; NOSC PRIPLL; PLLMULT MUL_15; SOSCEN enabled; PBDIV DIV_4; CLKLOCK unlocked; OSWEN Switch is Complete; SOSCRDY disabled; 
+    OSCCON = 0x1103302;
     SYSTEM_RegLock();
     // TUN Center Frequency; 
     OSCTUN = 0x0;

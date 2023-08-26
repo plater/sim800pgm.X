@@ -1,17 +1,17 @@
 /**
-  TMR5 Generated Driver API Header File 
+  TMR4 Generated Driver API Header File 
 
   @Company
     Microchip Technology Inc.
 
   @File Name
-    tmr5.h
+    tmr4.h
 
   @Summary
-    This is the generated header file for the TMR5 driver using PIC32MX MCUs
+    This is the generated header file for the TMR4 driver using PIC32MX MCUs
 
   @Description
-    This header file provides APIs for driver for TMR5. 
+    This header file provides APIs for driver for TMR4. 
     Generation Information : 
         Product Revision  :  PIC32MX MCUs - pic32mx : v1.35
         Device            :  PIC32MX470F512H
@@ -43,8 +43,8 @@
     TERMS.
 */
 
-#ifndef _TMR5_H
-#define _TMR5_H
+#ifndef _TMR4_H
+#define _TMR4_H
 
 /**
   Section: Included Files
@@ -88,28 +88,27 @@
 
     period = 0x20;
 
-    TMR5_Initialize();
+    TMR4_Initialize();
 
-    TMR5_Period16BitSet(period);
+    TMR4_Period16BitSet(period);
 
-    if((value = TMR5_Period16BitGet())== period)
+    if((value = TMR4_Period16BitGet())== period)
     {
-        TMR5_Start();
+        TMR4_Start();
     }
 
     while(1)
     {
-        TMR5_Tasks();
-        if( (statusTimer1 = TMR5_GetElapsedThenClear()) == true)
+        TMR4_Tasks();
+        if( (statusTimer1 = TMR4_GetElapsedThenClear()) == true)
         {
-            TMR5_Stop();
+            TMR4_Stop();
         }
     }
     </code>
 */
 
-void TMR5_Initialize (void);
-
+void TMR4_Initialize (void);
 
 /**
   @Summary
@@ -126,100 +125,124 @@ void TMR5_Initialize (void);
     None
  
   @Example 
-    Refer to the example of TMR5_Initialize();
+    Refer to the example of TMR4_Initialize();
 */
 
-void TMR5_Tasks_16BitOperation( void );
+void TMR4_Tasks_32BitOperation( void );
 
 /**
   @Summary
-    Updates 16-bit timer value
+    Updates 32-bit timer value
 
   @Description
-    This routine updates 16-bit timer value
+    This routine updates 32-bit timer value
 
   @Param
-    None.
-
-  @Returns
-    None
- 
-  @Example 
-    Refer to the example of TMR5_Initialize();
-*/
-
-void TMR5_Period16BitSet( uint16_t value );
-
-/**
-
-  @Summary
-    Provides the timer 16-bit period value
-
-  @Description
-    This routine provides the timer 16-bit period value
-
-  @Param
-    None.
-
-  @Returns
-    Timer 16-bit period value
- 
-  @Example 
-    Refer to the example of TMR5_Initialize();
-*/
-
-uint16_t TMR5_Period16BitGet( void );
-
-/**
-  @Summary
-    Updates the timer's 16-bit value
-
-  @Description
-    This routine updates the timer's 16-bit value
-
-  @Param
-    None.
+    value       - 32-bit period value
 
   @Returns
     None
 
   @Example 
     <code>
-    uint16_t value=0xF0F0;
+    bool statusTimer1;
+    uint32_t period;
+    uint32_t value;
 
-    TMR5_Counter16BitSet(value));
+    period = 0x20202020;
+
+    TMR4_Initialize();
+
+    TMR4_Period32BitSet(period);
+
+    if((value = TMR4_Period32BitGet())== period)
+    {
+        TMR4_Start();
+    }
 
     while(1)
     {
-        TMR5_Tasks();
-        if( (value == TMR5_Counter16BitGet()))
+        TMR4_Tasks();
+        if( (statusTimer1 = TMR4_IsElapsed()) == true)
         {
-            TMR5_Stop();
+            TMR4_Stop();
         }
     }
     </code>
 */
 
-void TMR5_Counter16BitSet ( uint16_t value );
+void TMR4_Period32BitSet( uint32_t value );
 
 /**
   @Summary
-    Provides 16-bit current counter value
+    Provides the timer 32-bit period value
 
   @Description
-    This routine provides 16-bit current counter value
+    This routine provides the timer 32-bit period value
 
   @Param
-    None.
+    None
 
   @Returns
-    16-bit current counter value
+    Timer 32-bit period value
  
   @Example 
-    Refer to the example of TMR5_Counter16BitSet();
+    Refer to the example of TMR4_Period32BitSet();
 */
 
-uint16_t TMR5_Counter16BitGet( void );
+uint32_t TMR4_Period32BitGet( void );
+
+/**
+  @Summary
+    Updates the timer's 32-bit value
+
+  @Description
+    This routine updates the timer's 32-bit value
+
+  @Param
+    value       - 32-bit Counter value
+
+  @Returns
+    None
+	
+  @Example 
+    <code>
+    uint32_t value=0xF0F0F0;
+
+    TMR4_Counter32BitSet(value));
+
+    while(1)
+    {
+        TMR4_Tasks();
+        if( (value == TMR4_Counter32BitGet()))
+        {
+            TMR4_Stop();
+        }
+    }
+    </code>
+*/
+
+void TMR4_Counter32BitSet( uint32_t value );
+
+/**
+  @Summary
+    Provides 32-bit  current counter value
+
+  @Description
+    This routine provides 32-bit current counter value
+
+  @Param
+    None
+
+  @Returns
+    32-bit current counter value
+ 
+  @Example 
+    Refer to the example of TMR4_Counter32BitSet();
+*/
+
+uint32_t TMR4_Counter32BitGet( void );
+
 
 
 /**
@@ -236,10 +259,10 @@ uint16_t TMR5_Counter16BitGet( void );
     None
  
   @Example 
-    Refer to the example of TMR5_Initialize();
+    Refer to the example of TMR4_Initialize();
 */
 
-void TMR5_Start( void );
+void TMR4_Start( void );
 
 /**
   @Summary
@@ -255,10 +278,10 @@ void TMR5_Start( void );
     None
  
   @Example 
-    Refer to the example of TMR5_Initialize();
+    Refer to the example of TMR4_Initialize();
 */
 
-void TMR5_Stop( void );
+void TMR4_Stop( void );
 
 /**
   @Summary
@@ -276,10 +299,10 @@ void TMR5_Stop( void );
     False - Timer has not elapsed.
  
   @Example 
-    Refer to the example of TMR5_Initialize();
+    Refer to the example of TMR4_Initialize();
 */
 
-bool TMR5_GetElapsedThenClear(void);
+bool TMR4_GetElapsedThenClear(void);
 
 /**
   @Summary
@@ -295,10 +318,10 @@ bool TMR5_GetElapsedThenClear(void);
     Software counter value.
  
   @Example 
-    Refer to the example of TMR5_Initialize();
+    Refer to the example of TMR4_Initialize();
 */
 
-int TMR5_SoftwareCounterGet(void);
+int TMR4_SoftwareCounterGet(void);
 
 /**
   @Summary
@@ -314,10 +337,10 @@ int TMR5_SoftwareCounterGet(void);
     None
  
   @Example 
-    Refer to the example of TMR5_Initialize();
+    Refer to the example of TMR4_Initialize();
 */
 
-void TMR5_SoftwareCounterClear(void);
+void TMR4_SoftwareCounterClear(void);
 
 #ifdef __cplusplus  // Provide C++ Compatibility
 
@@ -325,7 +348,7 @@ void TMR5_SoftwareCounterClear(void);
 
 #endif
 
-#endif //_TMR5_H
+#endif //_TMR4_H
     
 /**
  End of File
